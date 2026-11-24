@@ -42,12 +42,17 @@ export default function SkyBackground() {
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
-      W = window.innerWidth; H = window.innerHeight;
+      const w = window.innerWidth, h = window.innerHeight;
+      // Phone address bars change only the height while scrolling: keep the stars, just grow the canvas.
+      const reseed = w !== W || stars.length === 0;
+      W = w; H = Math.max(h, reseed ? 0 : H);
       c.width = W * dpr; c.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      stars = Array.from({ length: Math.round(W / 9) }, () => ({
-        x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3, p: Math.random() * 6,
-      }));
+      if (reseed) {
+        stars = Array.from({ length: Math.round(W / 9) }, () => ({
+          x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3, p: Math.random() * 6,
+        }));
+      }
     };
     const frame = (t: number) => {
       ctx.clearRect(0, 0, W, H);
@@ -69,6 +74,8 @@ export default function SkyBackground() {
 
   // Mouse parallax for the floating icons
   useEffect(() => {
+    // Phones and tablets have no mouse: skip the parallax loop to save battery.
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     const layer = layerRef.current!;
     let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
     const onMove = (e: MouseEvent) => {

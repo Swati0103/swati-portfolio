@@ -19,6 +19,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover', // lets the page use env(safe-area-inset-*) on notched iPhones
   themeColor: '#050D1F',
 };
 

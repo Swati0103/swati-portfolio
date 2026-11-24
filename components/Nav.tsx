@@ -38,6 +38,18 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Close the phone menu on a tap outside the nav or on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!(e.target as Element).closest('.nav')) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('pointerdown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [open]);
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
@@ -66,7 +78,14 @@ export default function Nav() {
           <button className="icon-btn" onClick={toggleTheme} title="Toggle day / night sky" aria-label="Toggle theme">
             {theme === 'dark' ? '🌙' : '☀️'}
           </button>
-          <button className="icon-btn menu-btn" onClick={() => setOpen((o) => !o)} aria-label="Open menu">☰</button>
+          <button
+            className="icon-btn menu-btn"
+            onClick={() => setOpen((o) => !o)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+          >
+            {open ? '✕' : '☰'}
+          </button>
         </div>
       </nav>
     </>
