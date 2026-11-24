@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { botKnowledge, botSuggestions } from '@/lib/data';
+import { botKnowledge, botSuggestions, profile } from '@/lib/data';
 
 type Msg = { id: number; who: 'bot' | 'user'; html: string; typing?: boolean };
 
@@ -18,7 +18,7 @@ function answer(q: string) {
     );
     if (sc > score) { score = sc; best = item.answer; }
   }
-  return best ?? "Good question! 🤔 I'm a small assistant, so try asking about <b>skills</b>, <b>projects</b>, <b>experience</b>, <b>AI</b> or <b>contact</b>, or email Swati directly.";
+  return best ?? `Sorry, I can only answer questions about Swati's work. 🙂 For anything else, please contact her directly:<br>📧 <a href="mailto:${profile.email}"><u>${profile.email}</u></a><br>📞 <a href="tel:${profile.phoneHref}"><u>${profile.phone}</u></a><br>Or ask me about <b>skills</b>, <b>projects</b> or <b>experience</b>.`;
 }
 
 export default function SwatiBot() {
